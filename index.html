@@ -11,7 +11,7 @@
 
     /* SIDEBAR */
     .sidebar { width: 270px; background-color: #0b1329; color: #94a3b8; display: flex; flex-direction: column; justify-content: space-between; padding: 20px 16px; flex-shrink: 0; font-size: 12px; }
-    .brand-section { border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 16px; margin-bottom: 16px; position: relative; }
+    .brand-section { border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 16px; margin-bottom: 16px; }
     .brand-title { font-weight: 800; color: #ffffff; font-size: 14px; line-height: 1.2; text-transform: uppercase; margin-bottom: 4px; }
     .brand-sub { font-size: 9px; color: #64748b; letter-spacing: 0.5px; margin-bottom: 14px; font-weight: 600; }
     .company-address { font-size: 10.5px; color: #64748b; line-height: 1.5; }
@@ -22,16 +22,24 @@
     .search-box input { background: transparent; border: none; color: #fff; font-size: 12px; outline: none; width: 100%; }
 
     .nav-menu { display: flex; flex-direction: column; gap: 4px; }
-    .nav-item { display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; border-radius: 6px; color: #94a3b8; text-decoration: none; font-weight: 600; font-size: 12px; cursor: pointer; }
+    .nav-item { display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; border-radius: 6px; color: #94a3b8; text-decoration: none; font-weight: 600; font-size: 12px; cursor: pointer; user-select: none; }
+    .nav-item:hover { background-color: rgba(255,255,255,0.05); color: #f8fafc; }
     .nav-item.active { background-color: #172554; color: #38bdf8; }
     .nav-item .left { display: flex; align-items: center; gap: 10px; }
     .nav-item i { width: 16px; text-align: center; }
+
+    .submenu { display: none; flex-direction: column; gap: 2px; padding-left: 28px; margin-top: 2px; }
+    .submenu.open { display: flex; }
+    .submenu-item { padding: 8px 12px; color: #64748b; font-size: 11.5px; border-radius: 4px; cursor: pointer; text-decoration: none; font-weight: 500; }
+    .submenu-item:hover { color: #38bdf8; background: rgba(255,255,255,0.03); }
 
     .sidebar-footer { border-top: 1px solid rgba(255,255,255,0.08); padding-top: 16px; }
     .signout-btn { display: flex; align-items: center; gap: 10px; color: #94a3b8; text-decoration: none; font-weight: 600; cursor: pointer; padding: 8px 0; font-size: 13px; }
 
     /* MAIN CONTENT */
     .main-content { flex: 1; padding: 24px; overflow-y: auto; }
+    .page-section { display: none; }
+    .page-section.active { display: block; }
 
     /* HERO BANNER */
     .hero-banner { background: #0f172a; color: #fff; border-radius: 16px; padding: 24px 28px; margin-bottom: 24px; }
@@ -40,18 +48,19 @@
     .hero-title { font-size: 28px; font-weight: 800; margin-bottom: 6px; }
     .hero-desc { font-size: 13px; color: #94a3b8; }
     .hero-date { font-size: 13px; color: #ffffff; font-weight: 500; }
-    .hero-badge { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); padding: 6px 14px; border-radius: 8px; font-size: 12px; display: inline-flex; align-items: center; gap: 8px; margin-top: 10px; font-weight: 600; }
+    .hero-badge { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); padding: 6px 14px; border-radius: 8px; font-size: 12px; display: inline-flex; align-items: center; gap: 8px; font-weight: 600; }
     .hero-badge-sub { background: rgba(234, 179, 8, 0.12); color: #fde047; border: 1px solid rgba(234, 179, 8, 0.2); font-size: 11px; padding: 4px 10px; border-radius: 12px; margin-top: 10px; display: inline-flex; align-items: center; gap: 6px; font-weight: 500; }
 
-    /* 10 METRIC CARDS */
+    /* METRICS GRID */
     .metrics-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; margin-bottom: 24px; }
-    .metric-card { background: #ffffff; border-radius: 12px; padding: 16px; border: 1px solid #e2e8f0; display: flex; flex-direction: column; justify-content: space-between; position: relative; height: 115px; box-shadow: 0 1px 2px rgba(0,0,0,0.03); }
+    .metric-card { background: #ffffff; border-radius: 12px; padding: 16px; border: 1px solid #e2e8f0; display: flex; flex-direction: column; justify-content: space-between; position: relative; height: 115px; box-shadow: 0 1px 2px rgba(0,0,0,0.03); cursor: pointer; transition: transform 0.1s ease; }
+    .metric-card:hover { transform: translateY(-2px); border-color: #cbd5e1; }
     .metric-card .icon-wrap { width: 34px; height: 34px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 15px; }
     .metric-card .arrow-icon { position: absolute; top: 16px; right: 16px; color: #cbd5e1; font-size: 11px; }
     .metric-card .label { font-size: 10.5px; font-weight: 700; text-transform: uppercase; color: #64748b; letter-spacing: 0.5px; }
     .metric-card .value { font-size: 24px; font-weight: 800; color: #0f172a; line-height: 1; }
 
-    /* METRIC ICONS COLOR SCHEME */
+    /* COLOR THEMES */
     .c-blue { background: #eff6ff; color: #2563eb; }
     .c-cyan { background: #ecfeff; color: #0891b2; }
     .c-teal { background: #f0fdf4; color: #10b981; }
@@ -68,13 +77,17 @@
     .summary-card.amber-bg { background: #fffdf5; border-color: #fef3c7; }
     .summary-card.purple-bg { background: #faf5ff; border-color: #f3e8ff; }
     .summary-card.green-bg { background: #f0fdf4; border-color: #dcfce7; }
-
     .summary-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; font-weight: 700; font-size: 14px; color: #0f172a; }
-    .summary-header .view-all { font-size: 11.5px; color: #2563eb; text-decoration: none; font-weight: 600; }
+    .summary-header .view-all { font-size: 11.5px; color: #2563eb; text-decoration: none; font-weight: 600; cursor: pointer; }
     .summary-list { display: flex; flex-direction: column; gap: 12px; font-size: 13px; color: #475569; }
     .summary-item { display: flex; justify-content: space-between; align-items: center; }
     .summary-item .num { font-weight: 700; color: #0f172a; }
     .summary-note { font-size: 11px; margin-top: 16px; display: flex; align-items: center; gap: 6px; }
+
+    /* PLACEHOLDER PAGE STYLES */
+    .placeholder-card { background: #ffffff; padding: 30px; border-radius: 12px; border: 1px solid #e2e8f0; }
+    .placeholder-card h2 { font-size: 20px; margin-bottom: 8px; }
+    .placeholder-card p { color: #64748b; font-size: 14px; }
   </style>
 </head>
 <body>
@@ -99,191 +112,285 @@
       </div>
 
       <nav class="nav-menu">
-        <a class="nav-item active">
+        <a class="nav-item active" onclick="switchPage('dashboard', this)">
           <div class="left"><i class="fa-solid fa-border-all"></i> Dashboard</div>
         </a>
-        <a class="nav-item">
+
+        <!-- SALES & MARKETING -->
+        <a class="nav-item" onclick="toggleSubmenu('sales-menu', this)">
           <div class="left"><i class="fa-solid fa-chart-line"></i> SALES & MARKETING</div>
-          <i class="fa-solid fa-chevron-right" style="font-size: 9px; opacity: 0.6;"></i>
+          <i class="fa-solid fa-chevron-right chevron-icon" style="font-size: 9px; opacity: 0.6;"></i>
         </a>
-        <a class="nav-item">
+        <div class="submenu" id="sales-menu">
+          <a class="submenu-item" onclick="switchPage('customers', this)">Customers</a>
+          <a class="submenu-item" onclick="switchPage('collection-orders', this)">Collection Orders</a>
+        </div>
+
+        <!-- OPERATION -->
+        <a class="nav-item" onclick="toggleSubmenu('operation-menu', this)">
           <div class="left"><i class="fa-solid fa-gears"></i> OPERATION</div>
-          <i class="fa-solid fa-chevron-right" style="font-size: 9px; opacity: 0.6;"></i>
+          <i class="fa-solid fa-chevron-right chevron-icon" style="font-size: 9px; opacity: 0.6;"></i>
         </a>
-        <a class="nav-item">
+        <div class="submenu" id="operation-menu">
+          <a class="submenu-item" onclick="switchPage('segregation', this)">Segregation Records</a>
+          <a class="submenu-item" onclick="switchPage('functional-tests', this)">Functional Testing</a>
+          <a class="submenu-item" onclick="switchPage('stock-transfers', this)">Stock Transfers</a>
+        </div>
+
+        <!-- RECEIVING -->
+        <a class="nav-item" onclick="toggleSubmenu('receiving-menu', this)">
           <div class="left"><i class="fa-solid fa-truck-ramp-box"></i> RECEIVING</div>
-          <i class="fa-solid fa-chevron-right" style="font-size: 9px; opacity: 0.6;"></i>
+          <i class="fa-solid fa-chevron-right chevron-icon" style="font-size: 9px; opacity: 0.6;"></i>
         </a>
-        <a class="nav-item">
+        <div class="submenu" id="receiving-menu">
+          <a class="submenu-item" onclick="switchPage('incoming-shipments', this)">Incoming Shipments</a>
+          <a class="submenu-item" onclick="switchPage('collection-jobs', this)">Collection Job Orders</a>
+        </div>
+
+        <!-- REPORTS -->
+        <a class="nav-item" onclick="toggleSubmenu('reports-menu', this)">
           <div class="left"><i class="fa-solid fa-file-lines"></i> REPORTS</div>
-          <i class="fa-solid fa-chevron-right" style="font-size: 9px; opacity: 0.6;"></i>
+          <i class="fa-solid fa-chevron-right chevron-icon" style="font-size: 9px; opacity: 0.6;"></i>
         </a>
+        <div class="submenu" id="reports-menu">
+          <a class="submenu-item" onclick="switchPage('inventory-report', this)">Inventory Summary Report</a>
+          <a class="submenu-item" onclick="switchPage('packing-lists', this)">Packing Lists</a>
+        </div>
       </nav>
     </div>
 
     <div class="sidebar-footer">
-      <a class="signout-btn"><i class="fa-solid fa-arrow-right-from-bracket"></i> Sign out</a>
+      <a class="signout-btn" onclick="alert('Sign out clicked')"><i class="fa-solid fa-arrow-right-from-bracket"></i> Sign out</a>
     </div>
   </aside>
 
-  <!-- MAIN DASHBOARD -->
+  <!-- MAIN DASHBOARD CONTENT -->
   <main class="main-content">
 
-    <!-- HERO BANNER -->
-    <div class="hero-banner">
-      <div class="hero-top">
-        <div>
-          <div class="hero-subtitle">Dashboard Overview</div>
-          <div class="hero-title">Good evening</div>
-          <div class="hero-desc">Here's a summary of your department's operations.</div>
+    <!-- PAGE 1: MAIN DASHBOARD -->
+    <div id="page-dashboard" class="page-section active">
+      <div class="hero-banner">
+        <div class="hero-top">
+          <div>
+            <div class="hero-subtitle">Dashboard Overview</div>
+            <div class="hero-title">Good evening</div>
+            <div class="hero-desc">Here's a summary of your department's operations.</div>
+          </div>
+          <div style="text-align: right;">
+            <div class="hero-date">Friday, August 21, 2026</div>
+            <div class="hero-badge"><i class="fa-solid fa-building"></i> Operation Department</div>
+          </div>
         </div>
-        <div style="text-align: right;">
-          <div class="hero-date">Friday, August 21, 2026</div>
-          <div class="hero-badge"><i class="fa-solid fa-building"></i> Operation Department</div>
+        <div class="hero-badge-sub"><i class="fa-solid fa-eye"></i> Viewing: Operation Department data only</div>
+      </div>
+
+      <!-- 10 METRIC CARDS -->
+      <div class="metrics-grid">
+        <div class="metric-card" onclick="switchPage('customers')">
+          <div class="icon-wrap c-blue"><i class="fa-solid fa-users"></i></div>
+          <i class="fa-solid fa-arrow-up-right-from-square arrow-icon"></i>
+          <div><div class="label">CUSTOMERS</div><div class="value">2</div></div>
+        </div>
+
+        <div class="metric-card" onclick="switchPage('collection-orders')">
+          <div class="icon-wrap c-cyan"><i class="fa-solid fa-clipboard-list"></i></div>
+          <i class="fa-solid fa-arrow-up-right-from-square arrow-icon"></i>
+          <div><div class="label">COLLECTION ORDERS</div><div class="value">67</div></div>
+        </div>
+
+        <div class="metric-card" onclick="switchPage('collection-jobs')">
+          <div class="icon-wrap c-teal"><i class="fa-solid fa-truck"></i></div>
+          <i class="fa-solid fa-arrow-up-right-from-square arrow-icon"></i>
+          <div><div class="label">COLLECTION JOB ORDERS</div><div class="value">65</div></div>
+        </div>
+
+        <div class="metric-card" onclick="switchPage('incoming-shipments')">
+          <div class="icon-wrap c-indigo"><i class="fa-solid fa-box-archive"></i></div>
+          <i class="fa-solid fa-arrow-up-right-from-square arrow-icon"></i>
+          <div><div class="label">INCOMING SHIPMENTS</div><div class="value">64</div></div>
+        </div>
+
+        <div class="metric-card" onclick="switchPage('segregation')">
+          <div class="icon-wrap c-purple"><i class="fa-solid fa-arrows-rotate"></i></div>
+          <i class="fa-solid fa-arrow-up-right-from-square arrow-icon"></i>
+          <div><div class="label">SEGREGATION RECORDS</div><div class="value">1</div></div>
+        </div>
+
+        <div class="metric-card" onclick="switchPage('functional-tests')">
+          <div class="icon-wrap c-green"><i class="fa-solid fa-wave-square"></i></div>
+          <i class="fa-solid fa-arrow-up-right-from-square arrow-icon"></i>
+          <div><div class="label">FUNCTIONAL TESTS</div><div class="value">0</div></div>
+        </div>
+
+        <div class="metric-card" onclick="switchPage('inventory-report')">
+          <div class="icon-wrap c-amber"><i class="fa-solid fa-boxes-stacked"></i></div>
+          <i class="fa-solid fa-arrow-up-right-from-square arrow-icon"></i>
+          <div><div class="label">INVENTORY ITEMS</div><div class="value">0</div></div>
+        </div>
+
+        <div class="metric-card" onclick="switchPage('stock-transfers')">
+          <div class="icon-wrap c-purple"><i class="fa-solid fa-right-left"></i></div>
+          <i class="fa-solid fa-arrow-up-right-from-square arrow-icon"></i>
+          <div><div class="label">STOCK TRANSFERS</div><div class="value">0</div></div>
+        </div>
+
+        <div class="metric-card">
+          <div class="icon-wrap c-red"><i class="fa-solid fa-shield-halved"></i></div>
+          <i class="fa-solid fa-arrow-up-right-from-square arrow-icon"></i>
+          <div><div class="label">PENDING TASKS</div><div class="value">2</div></div>
+        </div>
+
+        <div class="metric-card" onclick="switchPage('packing-lists')">
+          <div class="icon-wrap c-pink"><i class="fa-solid fa-file-invoice"></i></div>
+          <i class="fa-solid fa-arrow-up-right-from-square arrow-icon"></i>
+          <div><div class="label">PACKING LISTS</div><div class="value">0</div></div>
         </div>
       </div>
-      <div class="hero-badge-sub"><i class="fa-solid fa-eye"></i> Viewing: Operation Department data only</div>
+
+      <!-- 3 SUMMARY CARDS -->
+      <div class="summary-grid">
+        <div class="summary-card amber-bg">
+          <div class="summary-header">
+            <span><i class="fa-solid fa-layer-group" style="color: #d97706; margin-right: 6px;"></i> Inventory Summary</span>
+            <a class="view-all" onclick="switchPage('inventory-report')">View all &rarr;</a>
+          </div>
+          <div class="summary-list">
+            <div class="summary-item"><span>Total Quantity</span><span class="num">0</span></div>
+            <div class="summary-item"><span>In Stock</span><span class="num" style="color: #059669;">0</span></div>
+            <div class="summary-item"><span>In Testing</span><span class="num" style="color: #2563eb;">0</span></div>
+          </div>
+          <div class="summary-note" style="color: #d97706;"><i class="fa-solid fa-eye"></i> Showing Operation Department inventory only</div>
+        </div>
+
+        <div class="summary-card purple-bg">
+          <div class="summary-header">
+            <span><i class="fa-solid fa-right-left" style="color: #7c3aed; margin-right: 6px;"></i> Stock Transfers</span>
+            <a class="view-all" onclick="switchPage('stock-transfers')">View all &rarr;</a>
+          </div>
+          <div class="summary-list">
+            <div class="summary-item"><span>Total Transfers</span><span class="num">0</span></div>
+            <div class="summary-item"><span><i class="fa-regular fa-clock" style="color: #d97706;"></i> Pending</span><span class="num" style="color: #d97706;">0</span></div>
+            <div class="summary-item"><span><i class="fa-regular fa-circle-check" style="color: #2563eb;"></i> Approved</span><span class="num" style="color: #2563eb;">0</span></div>
+            <div class="summary-item"><span><i class="fa-regular fa-circle-check" style="color: #059669;"></i> Received</span><span class="num" style="color: #059669;">0</span></div>
+          </div>
+          <div class="summary-note" style="color: #7c3aed;"><i class="fa-solid fa-eye"></i> Involving Operation Department only</div>
+        </div>
+
+        <div class="summary-card green-bg">
+          <div class="summary-header">
+            <span><i class="fa-solid fa-wrench" style="color: #059669; margin-right: 6px;"></i> Functional Testing</span>
+            <a class="view-all" onclick="switchPage('functional-tests')">View all &rarr;</a>
+          </div>
+          <div class="summary-list">
+            <div class="summary-item"><span><i class="fa-regular fa-circle-check" style="color: #059669;"></i> Reports Created</span><span class="num" style="color: #059669;">0</span></div>
+            <div class="summary-item"><span><i class="fa-solid fa-triangle-exclamation" style="color: #d97706;"></i> Pending Tests</span><span class="num" style="color: #d97706;">0</span></div>
+            <div class="summary-item"><span>Tested Records</span><span class="num" style="color: #2563eb;">0</span></div>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <!-- 10 METRIC CARDS -->
-    <div class="metrics-grid">
-      <div class="metric-card">
-        <div class="icon-wrap c-blue"><i class="fa-solid fa-users"></i></div>
-        <i class="fa-solid fa-arrow-up-right-from-square arrow-icon"></i>
-        <div>
-          <div class="label">CUSTOMERS</div>
-          <div class="value">2</div>
-        </div>
-      </div>
-
-      <div class="metric-card">
-        <div class="icon-wrap c-cyan"><i class="fa-solid fa-clipboard-list"></i></div>
-        <i class="fa-solid fa-arrow-up-right-from-square arrow-icon"></i>
-        <div>
-          <div class="label">COLLECTION ORDERS</div>
-          <div class="value">67</div>
-        </div>
-      </div>
-
-      <div class="metric-card">
-        <div class="icon-wrap c-teal"><i class="fa-solid fa-truck"></i></div>
-        <i class="fa-solid fa-arrow-up-right-from-square arrow-icon"></i>
-        <div>
-          <div class="label">COLLECTION JOB ORDERS</div>
-          <div class="value">65</div>
-        </div>
-      </div>
-
-      <div class="metric-card">
-        <div class="icon-wrap c-indigo"><i class="fa-solid fa-box-archive"></i></div>
-        <i class="fa-solid fa-arrow-up-right-from-square arrow-icon"></i>
-        <div>
-          <div class="label">INCOMING SHIPMENTS</div>
-          <div class="value">64</div>
-        </div>
-      </div>
-
-      <div class="metric-card">
-        <div class="icon-wrap c-purple"><i class="fa-solid fa-arrows-rotate"></i></div>
-        <i class="fa-solid fa-arrow-up-right-from-square arrow-icon"></i>
-        <div>
-          <div class="label">SEGREGATION RECORDS</div>
-          <div class="value">1</div>
-        </div>
-      </div>
-
-      <div class="metric-card">
-        <div class="icon-wrap c-green"><i class="fa-solid fa-wave-square"></i></div>
-        <i class="fa-solid fa-arrow-up-right-from-square arrow-icon"></i>
-        <div>
-          <div class="label">FUNCTIONAL TESTS</div>
-          <div class="value">0</div>
-        </div>
-      </div>
-
-      <div class="metric-card">
-        <div class="icon-wrap c-amber"><i class="fa-solid fa-boxes-stacked"></i></div>
-        <i class="fa-solid fa-arrow-up-right-from-square arrow-icon"></i>
-        <div>
-          <div class="label">INVENTORY ITEMS</div>
-          <div class="value">0</div>
-        </div>
-      </div>
-
-      <div class="metric-card">
-        <div class="icon-wrap c-purple"><i class="fa-solid fa-right-left"></i></div>
-        <i class="fa-solid fa-arrow-up-right-from-square arrow-icon"></i>
-        <div>
-          <div class="label">STOCK TRANSFERS</div>
-          <div class="value">0</div>
-        </div>
-      </div>
-
-      <div class="metric-card">
-        <div class="icon-wrap c-red"><i class="fa-solid fa-shield-halved"></i></div>
-        <i class="fa-solid fa-arrow-up-right-from-square arrow-icon"></i>
-        <div>
-          <div class="label">PENDING TASKS</div>
-          <div class="value">2</div>
-        </div>
-      </div>
-
-      <div class="metric-card">
-        <div class="icon-wrap c-pink"><i class="fa-solid fa-file-invoice"></i></div>
-        <i class="fa-solid fa-arrow-up-right-from-square arrow-icon"></i>
-        <div>
-          <div class="label">PACKING LISTS</div>
-          <div class="value">0</div>
-        </div>
+    <!-- PLACEHOLDER MODULE PAGES -->
+    <div id="page-customers" class="page-section">
+      <div class="placeholder-card">
+        <h2><i class="fa-solid fa-users" style="color: #2563eb;"></i> Customers Module</h2>
+        <p>Customer directory and management section ready for features.</p>
       </div>
     </div>
 
-    <!-- 3 SUMMARY CARDS -->
-    <div class="summary-grid">
-      <!-- Inventory Summary -->
-      <div class="summary-card amber-bg">
-        <div class="summary-header">
-          <span><i class="fa-solid fa-layer-group" style="color: #d97706; margin-right: 6px;"></i> Inventory Summary</span>
-          <a class="view-all" href="#">View all &rarr;</a>
-        </div>
-        <div class="summary-list">
-          <div class="summary-item"><span>Total Quantity</span><span class="num">0</span></div>
-          <div class="summary-item"><span>In Stock</span><span class="num" style="color: #059669;">0</span></div>
-          <div class="summary-item"><span>In Testing</span><span class="num" style="color: #2563eb;">0</span></div>
-        </div>
-        <div class="summary-note" style="color: #d97706;"><i class="fa-solid fa-eye"></i> Showing Operation Department inventory only</div>
+    <div id="page-collection-orders" class="page-section">
+      <div class="placeholder-card">
+        <h2><i class="fa-solid fa-clipboard-list" style="color: #0891b2;"></i> Collection Orders Module</h2>
+        <p>Collection order listing and creation workspace.</p>
       </div>
+    </div>
 
-      <!-- Stock Transfers -->
-      <div class="summary-card purple-bg">
-        <div class="summary-header">
-          <span><i class="fa-solid fa-right-left" style="color: #7c3aed; margin-right: 6px;"></i> Stock Transfers</span>
-          <a class="view-all" href="#">View all &rarr;</a>
-        </div>
-        <div class="summary-list">
-          <div class="summary-item"><span>Total Transfers</span><span class="num">0</span></div>
-          <div class="summary-item"><span><i class="fa-regular fa-clock" style="color: #d97706;"></i> Pending</span><span class="num" style="color: #d97706;">0</span></div>
-          <div class="summary-item"><span><i class="fa-regular fa-circle-check" style="color: #2563eb;"></i> Approved</span><span class="num" style="color: #2563eb;">0</span></div>
-          <div class="summary-item"><span><i class="fa-regular fa-circle-check" style="color: #059669;"></i> Received</span><span class="num" style="color: #059669;">0</span></div>
-        </div>
-        <div class="summary-note" style="color: #7c3aed;"><i class="fa-solid fa-eye"></i> Involving Operation Department only</div>
+    <div id="page-collection-jobs" class="page-section">
+      <div class="placeholder-card">
+        <h2><i class="fa-solid fa-truck" style="color: #10b981;"></i> Collection Job Orders Module</h2>
+        <p>Logistics and driver job assignments view.</p>
       </div>
+    </div>
 
-      <!-- Functional Testing -->
-      <div class="summary-card green-bg">
-        <div class="summary-header">
-          <span><i class="fa-solid fa-wrench" style="color: #059669; margin-right: 6px;"></i> Functional Testing</span>
-          <a class="view-all" href="#">View all &rarr;</a>
-        </div>
-        <div class="summary-list">
-          <div class="summary-item"><span><i class="fa-regular fa-circle-check" style="color: #059669;"></i> Reports Created</span><span class="num" style="color: #059669;">0</span></div>
-          <div class="summary-item"><span><i class="fa-solid fa-triangle-exclamation" style="color: #d97706;"></i> Pending Tests</span><span class="num" style="color: #d97706;">0</span></div>
-          <div class="summary-item"><span>Tested Records</span><span class="num" style="color: #2563eb;">0</span></div>
-        </div>
+    <div id="page-incoming-shipments" class="page-section">
+      <div class="placeholder-card">
+        <h2><i class="fa-solid fa-box-archive" style="color: #6366f1;"></i> Incoming Shipments</h2>
+        <p>Receiving log and asset check-in portal.</p>
+      </div>
+    </div>
+
+    <div id="page-segregation" class="page-section">
+      <div class="placeholder-card">
+        <h2><i class="fa-solid fa-arrows-rotate" style="color: #8b5cf6;"></i> Segregation Records</h2>
+        <p>E-waste and asset sorting records view.</p>
+      </div>
+    </div>
+
+    <div id="page-functional-tests" class="page-section">
+      <div class="placeholder-card">
+        <h2><i class="fa-solid fa-wave-square" style="color: #22c55e;"></i> Functional Testing</h2>
+        <p>Testing queue and hardware verification log.</p>
+      </div>
+    </div>
+
+    <div id="page-inventory-report" class="page-section">
+      <div class="placeholder-card">
+        <h2><i class="fa-solid fa-boxes-stacked" style="color: #f59e0b;"></i> Inventory Items</h2>
+        <p>Real-time asset inventory levels and tracking.</p>
+      </div>
+    </div>
+
+    <div id="page-stock-transfers" class="page-section">
+      <div class="placeholder-card">
+        <h2><i class="fa-solid fa-right-left" style="color: #8b5cf6;"></i> Stock Transfers</h2>
+        <p>Inter-departmental and location transfer logs.</p>
+      </div>
+    </div>
+
+    <div id="page-packing-lists" class="page-section">
+      <div class="placeholder-card">
+        <h2><i class="fa-solid fa-file-invoice" style="color: #ec4899;"></i> Packing Lists</h2>
+        <p>Outbound shipment and packing verification section.</p>
       </div>
     </div>
 
   </main>
 
+  <!-- INTERACTIVITY SCRIPT -->
+  <script>
+    function toggleSubmenu(id, element) {
+      const menu = document.getElementById(id);
+      const isVisible = menu.classList.contains('open');
+
+      // Close all submenus
+      document.querySelectorAll('.submenu').forEach(s => s.classList.remove('open'));
+      document.querySelectorAll('.chevron-icon').forEach(i => i.style.transform = 'rotate(0deg)');
+
+      if (!isVisible) {
+        menu.classList.add('open');
+        const chevron = element.querySelector('.chevron-icon');
+        if (chevron) chevron.style.transform = 'rotate(90deg)';
+      }
+    }
+
+    function switchPage(pageId, element) {
+      // Hide all pages
+      document.querySelectorAll('.page-section').forEach(p => p.classList.remove('active'));
+
+      // Show selected page
+      const targetPage = document.getElementById('page-' + pageId);
+      if (targetPage) {
+        targetPage.classList.add('active');
+      }
+
+      // Update active menu styling
+      if (element) {
+        document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+        if (element.classList.contains('nav-item')) {
+          element.classList.add('active');
+        }
+      }
+    }
+  </script>
 </body>
 </html>

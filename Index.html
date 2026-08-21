@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MM Century System Portal</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { display: flex; min-height: 100vh; background-color: #f3f5f9; color: #333; }
+
+    /* AUTH OVERLAY */
+    .login-overlay { position: fixed; inset: 0; background: rgba(11, 17, 32, 0.9); backdrop-filter: blur(10px); display: flex; justify-content: center; align-items: center; z-index: 9999; }
+    .login-overlay.hidden { display: none; }
+    .login-card { background: #fff; width: 100%; max-width: 400px; border-radius: 12px; padding: 30px; box-shadow: 0 20px 25px rgba(0, 0, 0, 0.4); }
+    .login-header { text-align: center; margin-bottom: 20px; }
+    .login-brand-title { font-size: 16px; font-weight: 800; color: #0b1120; }
+    .login-brand-sub { font-size: 10px; color: #64748b; letter-spacing: 0.5px; }
+    .form-group { margin-bottom: 14px; }
+    .form-group label { display: block; font-size: 12px; font-weight: 600; color: #475569; margin-bottom: 5px; }
+    .form-group input, .form-group select { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; outline: none; background: #f8fafc; }
+    .error-msg { color: #dc2626; font-size: 11px; margin-bottom: 10px; display: none; }
+    .login-btn { width: 100%; background: #2563eb; color: #fff; border: none; padding: 10px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; }
+    .login-btn:hover { background: #1d4ed8; }
+
+    /* SIDEBAR */
+    .sidebar { width: 260px; background-color: #0b1120; color: #a0aec0; display: flex; flex-direction: column; justify-content: space-between; padding: 20px 15px; flex-shrink: 0; }
+    .brand-section { border-bottom: 1px solid #1a233a; padding-bottom: 15px; margin-bottom: 15px; }
+    .brand-title { color: #ffffff; font-weight: 700; font-size: 14px; }
+    .brand-sub { font-size: 10px; color: #718096; margin-top: 4px; }
+    .company-details { font-size: 11px; color: #64748b; margin-top: 10px; line-height: 1.4; }
+    .company-details i { width: 14px; margin-right: 4px; }
+    
+    /* NAVIGATION ACCORDIONS */
+    .nav-menu { display: flex; flex-direction: column; gap: 4px; overflow-y: auto; max-height: calc(100vh - 320px); }
+    .nav-item { display: flex; align-items: center; padding: 10px 12px; border-radius: 6px; color: #94a3b8; font-size: 12px; font-weight: 600; text-decoration: none; justify-content: space-between; cursor: pointer; user-select: none; }
+    .nav-item.active, .nav-item:hover { background-color: #161f33; color: #ffffff; }
+    .nav-item-left { display: flex; align-items: center; gap: 10px; }
+    .chevron { transition: transform 0.3s ease; font-size: 10px; }
+    .nav-accordion.open .chevron { transform: rotate(90deg); }
+
+    .submenu { display: none; flex-direction: column; gap: 2px; padding-left: 28px; margin-top: 2px; }
+    .nav-accordion.open .submenu { display: flex; }
+    .submenu-item { padding: 8px 10px; color: #64748b; font-size: 11px; text-decoration: none; border-radius: 4px; cursor: pointer; }
+    .submenu-item:hover, .submenu-item.active { color: #60a5fa; background-color: rgba(37, 99, 235, 0.1); }
+
+    .sidebar-footer { border-top: 1px solid #1a233a; padding-top: 15px; }
+    .user-profile { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; }
+    .avatar { width: 32px; height: 32px; background-color: #2563eb; color: #fff; font-weight: bold; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 13px; }
+    .user-info { font-size: 12px; }
+    .user-name { color: #fff; font-weight: 600; }
+    .badge { font-size: 10px; padding: 1px 5px; border-radius: 4px; font-weight: 600; }
+    .badge-super { background: #1e3a8a; color: #60a5fa; }
+    .badge-admin { background: #7f1d1d; color: #fca5a5; }
+    .logout-btn { color: #f87171; font-size: 13px; display: flex; align-items: center; gap: 8px; cursor: pointer; background: none; border: none; width: 100%; }
+
+    /* MAIN CONTENT AREA */
+    .main-content { flex: 1; padding: 24px; overflow-y: auto; }
+    .view-panel { display: none; }
+    .view-panel.active { display: block; }
+
+    /* COMPONENTS */
+    .banner { background: linear-gradient(135deg, #0b162c 0%, #172747 100%); color: white; padding: 24px; border-radius: 12px; margin-bottom: 20px; position: relative; }
+    .banner-sub { font-size: 11px; letter-spacing: 1px; color: #93c5fd; text-transform: uppercase; font-weight: 600; margin-bottom: 6px; }
+    .banner-title { font-size: 24px; font-weight: 700; margin-bottom: 6px; }
+    .banner-desc { font-size: 13px; color: #cbd5e1; }
+    .banner-right { position: absolute; top: 20px; right: 20px; display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
+    .date-str { font-size: 12px; color: #93c5fd; }
+    .dept-pill { background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+
+    .metrics-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
+    .metric-card { background: #ffffff; border-radius: 10px; padding: 16px; position: relative; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+    .card-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-bottom: 12px; font-size: 14px; background-color: #e0f2fe; color: #0284c7; }
+    .card-label { font-size: 10px; font-weight: 700; color: #64748b; margin-bottom: 6px; }
+    .card-value { font-size: 22px; font-weight: 700; color: #0f172a; }
+
+    .content-box { background: #fff; border-radius: 10px; padding: 20px; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.03); margin-bottom: 16px; }
+    .content-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+    .content-title { font-size: 16px; font-weight: 700; color: #0f172a; }
+
+    .data-table { width: 100%; border-collapse: collapse; font-size: 12px; text-align: left; }
+    .data-table th { background: #f8fafc; padding: 10px; color: #475569; font-weight: 600; border-bottom: 1px solid #e2e8f0; }
+    .data-table td { padding: 10px; border-bottom: 1px solid #f1f5f9; color: #334155; }
+    
+    .btn-action { background: #2563eb; color: #fff; border: none; padding: 8px 14px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; }
+    .asset-img-placeholder { width: 40px; height: 40px; background: #e2e8f0; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: #94a3b8; }
+  </style>
+</head>
+<body>
+
+  <!-- LOGIN MODAL -->
+  <div class="login-overlay" id="loginOverlay">
+    <div class="login-card">
+      <div class="login-header">
+        <div class="login-brand-title">MM CENTURY SDN. BHD.</div>
+        <div class="login-brand-sub">AUTHENTICATION PORTAL</div>
+      </div>
+      <form id="loginForm">
+        <div class="form-group">
+          <label>Select Access Role</label>
+          <select id="roleSelect">
+            <option value="supervisor">Project Supervisor</option>
+            <option value="admin">System Administrator</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" id="passwordInput" placeholder="Enter password" required>
+        </div>
+        <div class="error-msg" id="errorMsg">Invalid Password! (Supervisor: super123 | Admin: admin123)</div>
+        <button type="submit" class="login-btn"><i class="fa-solid fa-lock"></i> Login to System</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- SIDEBAR NAVIGATION -->
+  <aside class="sidebar">
+    <div>
+      <div class="brand-section">
+        <div class="brand-title">MM CENTURY SDN. BHD.</div>
+        <div class="brand-sub">COMPLIANT. SECURE. SUSTAINABLE</div>
+        <div class="company-details">
+          <i class="fa-solid fa-location-dot"></i> PMT 1278, Lorong PSPN 1, Penang Science Park, 14100, Simpang Ampat, Penang, Malaysia<br>
+          <i class="fa-solid fa-phone"></i> +604502 0643<br>
+          <i class="fa-solid fa-envelope"></i> enquiries@mmcentury.com<br>
+          <i class="fa-solid fa-globe"></i> http://www.mmcentury.com
+        </div>
+      </div>
+
+      <!-- SUPERVISOR MENU -->
+      <nav class="nav-menu" id="supervisorMenu">
+        <a href="#" class="nav-item active" onclick="switchView('dashboardView')">
+          <div class="nav-item-left"><i class="fa-solid fa-border-all"></i><span>Dashboard</span></div>
+        </a>
+
+        <!-- SALES & MARKETING ACCORDION -->
+        <div class="nav-accordion" id="accSales">
+          <div class="nav-item" onclick="toggleAccordion('accSales')">
+            <div class="nav-item-left"><i class="fa-solid fa-chart-line"></i><span>SALES & MARKETING</span></div>
+            <i class="fa-solid fa-chevron-right chevron"></i>
+          </div>
+          <div class="submenu">
+            <div class="submenu-item" onclick="switchView('customersView')">1) Customers</div>
+            <div class="submenu-item" onclick="switchView('createOrderView')">2) Create Collection Order</div>
+          </div>
+        </div>
+
+        <!-- OPERATIONS ACCORDION -->
+        <div class="nav-accordion" id="accOps">
+          <div class="nav-item" onclick="toggleAccordion('accOps')">
+            <div class="nav-item-left"><i class="fa-solid fa-gears"></i><span>OPERATIONS</span></div>
+            <i class="fa-solid fa-chevron-right chevron"></i>
+          </div>
+          <div class="submenu">
+            <div class="submenu-item" onclick="switchView('jobOrderView')">1) Job Order List</div>
+          </div>
+        </div>
+
+        <!-- RECEIVING ACCORDION -->
+        <div class="nav-accordion" id="accRec">
+          <div class="nav-item" onclick="toggleAccordion('accRec')">
+            <div class="nav-item-left"><i class="fa-solid fa-truck-ramp-box"></i><span>RECEIVING</span></div>
+            <i class="fa-solid fa-chevron-right chevron"></i>
+          </div>
+          <div class="submenu">
+            <div class="submenu-item" onclick="switchView('incomingShipmentsView')">1) Incoming Shipments</div>
+          </div>
+        </div>
+
+        <!-- REPORTS ACCORDION -->
+        <div class="nav-accordion" id="accRep">
+          <div class="nav-item" onclick="toggleAccordion('accRep')">
+            <div class="nav-item-left"><i class="fa-solid fa-file-invoice"></i><span>REPORTS</span></div>
+            <i class="fa-solid fa-chevron-right chevron"></i>
+          </div>
+          <div class="submenu">
+            <div class="submenu-item" onclick="switchView('certDestructionView')">1) Certificate of Destruction</div>
+            <div class="submenu-item" onclick="switchView('issuedCertsView')">2) Issued Certificates</div>
+            <div class="submenu-item" onclick="switchView('cjoReportsView')">3) CJO Reports</div>
+            <div class="submenu-item" onclick="switchView('assetListView')">4) Asset List with Pictures</div>
+            <div class="submenu-item" onclick="switchView('collectionSummaryView')">5) Collection Summary</div>
+          </div>
+        </div>
+      </nav>
+
+      <!-- ADMIN MENU -->
+      <nav class="nav-menu" id="adminMenu" style="display: none;">
+        <a href="#" class="nav-item active" onclick="switchView('adminDashboardView')">
+          <div class="nav-item-left"><i class="fa-solid fa-user-shield"></i><span>Admin Controls</span></div>
+        </a>
+        <a href="#" class="nav-item" onclick="switchView('userMgmtView')">
+          <div class="nav-item-left"><i class="fa-solid fa-users-gear"></i><span>User Management</span></div>
+        </a>
+        <a href="#" class="nav-item" onclick="switchView('auditLogsView')">
+          <div class="nav-item-left"><i class="fa-solid fa-shield-halved"></i><span>System Audit Logs</span></div>
+        </a>
+      </nav>
+
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="user-profile">
+        <div class="avatar" id="userAvatar">S</div>
+        <div class="user-info">
+          <div class="user-name" id="userName">Project Supervisor</div>
+          <div><span class="badge badge-super" id="userBadge">SUPERVISOR</span></div>
+        </div>
+      </div>
+      <button class="logout-btn" id="logoutBtn"><i class="fa-solid fa-right-from-bracket"></i> Sign Out</button>
+    </div>
+  </aside>
+
+  <!-- MAIN VIEW PANELS -->
+  <main class="main-content">
+
+    <!-- SUPERVISOR DASHBOARD VIEW -->
+    <div class="view-panel active" id="dashboardView">
+      <div class="banner">
+        <div class="banner-sub">PROJECT SUPERVISOR OVERVIEW</div>
+        <h1 class="banner-title">Welcome back, Supervisor</h1>
+        <p class="banner-desc">Select any breakdown menu from the sidebar to manage field operations.</p>
+        <div class="banner-right">
+          <div class="date-str">Friday, August 21, 2026</div>
+          <div class="dept-pill"><i class="fa-solid fa-user-gear"></i> Supervisor Active Workspace</div>
+        </div>
+      </div>
+      <div class="metrics-grid">
+        <div class="metric-card"><div class="card-icon"><i class="fa-solid fa-users"></i></div><div class="card-label">ACTIVE CUSTOMERS</div><div class="card-value">24</div></div>
+        <div class="metric-card"><div class="card-icon"><i class="fa-solid fa-clipboard-list"></i></div><div class="card-label">OPEN JOB ORDERS</div><div class="card-value">12</div></div>
+        <div class="metric-card"><div class="card-icon"><i class="fa-solid fa-boxes-packing"></i></div><div class="card-label">INCOMING SHIPMENTS</div><div class="card-value">8</div></div>
+        <div class="metric-card"><div class="card-icon"><i class="fa-solid fa-certificate"></i></div><div class="card-label">ISSUED CERTS</div><div class="card-value">142</div></div>
+      </div>
+    </div>
+
+    <!-- ADMIN DASHBOARD VIEW -->
+    <div class="view-panel" id="adminDashboardView">
+      <div class="banner" style="background: linear-gradient(135deg, #1e1b4b 0%, #31103f 100%);">
+        <div class="banner-sub">SYSTEM ADMINISTRATION</div>
+        <h1 class="banner-title">Master Control Dashboard</h1>
+        <p class="banner-desc">Global security oversight, user permissions, and database sync status.</p>
+        <div class="banner-right">
+          <div class="date-str">Friday, August 21, 2026</div>
+          <div class="dept-pill"><i class="fa-solid fa-shield-cat"></i> System Administrator</div>
+        </div>
+      </div>
+      <div class="metrics-grid">
+        <div class="metric-card"><div class="card-icon" style="background:#fee2e2; color:#dc2626;"><i class="fa-solid fa-users"></i></div><div class="card-label">TOTAL ACCOUNTS</div><div class="card-value">154</div></div>
+        <div class="metric-card"><div class="card-icon" style="background:#f3e8ff; color:#9333ea;"><i class="fa-solid fa-key"></i></div><div class="card-label">ACTIVE SESSIONS</div><div class="card-value">18</div></div>
+        <div class="metric-card"><div class="card-icon" style="background:#ccfbf1; color:#0d9488;"><i class="fa-solid fa-server"></i></div><div class="card-label">SYSTEM UPTIME</div><div class="card-value">99.9%</div></div>
+        <div class="metric-card"><div class="card-icon" style="background:#fef3c7; color:#d97706;"><i class="fa-solid fa-shield-halved"></i></div><div class="card-label">SECURITY EVENTS</div><div class="card-value">0</div></div>
+      </div>
+    </div>
+
+    <!-- ADMIN: USER MANAGEMENT VIEW -->
+    <div class="view-panel" id="userMgmtView">
+      <div class="content-box">
+        <div class="content-header"><div class="content-title">System User Access Control</div><button class="btn-action">+ Add New User</button></div>
+        <table class="data-table">
+          <thead><tr><th>User ID</th><th>Name</th><th>Role</th><th>Status</th><th>Last Login</th></tr></thead>
+          <tbody>
+            <tr><td>USR-001</td><td>System Administrator</td><td><span style="color:#dc2626; font-weight:600;">Admin</span></td><td>Active</td><td>Just Now</td></tr>
+            <tr><td>USR-002</td><td>Project Supervisor</td><td><span style="color:#2563eb; font-weight:600;">Supervisor</span></td><td>Active</td><td>Today, 08:30 AM</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ADMIN: AUDIT LOGS VIEW -->
+    <div class="view-panel" id="auditLogsView">
+      <div class="content-box">
+        <div class="content-title" style="margin-bottom:15px;">System Audit Trail</div>
+        <table class="data-table">
+          <thead><tr><th>Timestamp</th><th>User</th><th>Action Performed</th><th>IP Address</th></tr></thead>
+          <tbody>
+            <tr><td>2026-08-21 08:32:01</td><td>Project Supervisor</td><td>Created Collection Order #JO-2026-089</td><td>192.168.1.45</td></tr>
+            <tr><td>2026-08-21 08:30:12</td><td>Project Supervisor</td><td>User Login Success</td><td>192.168.1.45</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 1) SALES & MARKETING VIEWS -->
+    <div class="view-panel" id="customersView">
+      <div class="content-box">
+        <div class="content-header">
+          <div class="content-title">Customers Directory</div>
+          <button class="btn-action">+ Add Customer</button>
+        </div>
+        <table class="data-table">
+          <thead><tr><th>Customer ID</th><th>Company Name</th><th>Contact Person</th><th>Location</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td>CUST-101</td><td>Intel Penang Site 1</td><td>Tan Ah Seng</td><td>Bayan Lepas, Penang</td><td><span style="color:green; font-weight:600;">Active</span></td></tr>
+            <tr><td>CUST-102</td><td>Infenion Tech</td><td>Siti Nurhaliza</td><td>Kulim Hi-Tech</td><td><span style="color:green; font-weight:600;">Active</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="view-panel" id="createOrderView">
+      <div class="content-box">
+        <div class="content-title" style="margin-bottom:15px;">Create Collection Order</div>
+        <form style="display:grid; grid-template-columns: 1fr 1fr; gap:15px;" onsubmit="event.preventDefault(); alert('Collection Order Created!');">
+          <div><label style="font-size:12px; font-weight:600;">Select Customer</label><input type="text" placeholder="Intel Penang" style="width:100%; padding:8px; margin-top:4px; border:1px solid #cbd5e1; border-radius:6px;"></div>
+          <div><label style="font-size:12px; font-weight:600;">Collection Date</label><input type="date" style="width:100%; padding:8px; margin-top:4px; border:1px solid #cbd5e1; border-radius:6px;"></div>
+          <div style="grid-column: span 2;"><label style="font-size:12px; font-weight:600;">Item Descriptions & Waste Type</label><textarea style="width:100%; padding:8px; margin-top:4px; height:80px; border:1px solid #cbd5e1; border-radius:6px;"></textarea></div>
+          <button type="submit" class="btn-action" style="grid-column: span 2; justify-self: start;">Submit Collection Order</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- 2) OPERATIONS VIEW -->
+    <div class="view-panel" id="jobOrderView">
+      <div class="content-box">
+        <div class="content-header"><div class="content-title">Job Order List (CJO Execution)</div></div>
+        <table class="data-table">
+          <thead><tr><th>Job Order #</th><th>Customer</th><th>Assigned Team</th><th>Scheduled Date</th><th>Progress</th></tr></thead>
+          <tbody>
+            <tr><td>JO-2026-089</td><td>Intel Penang</td><td>Team Alpha (Ganesh)</td><td>2026-08-22</td><td><span style="color:orange; font-weight:600;">Pending Pickup</span></td></tr>
+            <tr><td>JO-2026-088</td><td>Infenion Tech</td><td>Team Beta</td><td>2026-08-21</td><td><span style="color:blue; font-weight:600;">In Transit</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 3) RECEIVING VIEW -->
+    <div class="view-panel" id="incomingShipmentsView">
+      <div class="content-box">
+        <div class="content-header"><div class="content-title">Incoming Shipments Log</div></div>
+        <table class="data-table">
+          <thead><tr><th>Shipment ID</th><th>Lorry Plate</th><th>Driver Name</th><th>Weight (KG)</th><th>Receiving Status</th></tr></thead>
+          <tbody>
+            <tr><td>SHP-8821</td><td>PGB 4412</td><td>Ahmad Razak</td><td>4,500 KG</td><td><span style="color:green; font-weight:600;">Verified & Weighed</span></td></tr>
+            <tr><td>SHP-8822</td><td>PJJ 9011</td><td>Kishore Kumar</td><td>1,200 KG</td><td><span style="color:orange; font-weight:600;">Awaiting Inspection</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 4) REPORTS VIEWS -->
+    <div class="view-panel" id="certDestructionView">
+      <div class="content-box">
+        <div class="content-header"><div class="content-title">Certificate of Destruction Generator</div></div>
+        <p style="font-size:12px; color:#64748b; margin-bottom:15px;">Generate official certified destruction documents for completed recycling jobs.</p>
+        <button class="btn-action">+ Generate New Certificate</button>
+      </div>
+    </div>
+
+    <div class="view-panel" id="issuedCertsView">
+      <div class="content-box">
+        <div class="content-header"><div class="content-title">Issued Certificates Repository</div></div>
+        <table class="data-table">
+          <thead><tr><th>Certificate #</th><th>Customer</th><th>Issue Date</th><th>Action</th></tr></thead>
+          <tbody>
+            <tr><td>COD-2026-001</td><td>Intel Penang</td><td>2026-08-15</td><td><a href="#" style="color:#2563eb;">Download PDF</a></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="view-panel" id="cjoReportsView">
+      <div class="content-box">
+        <div class="content-title">Collection Job Order (CJO) Reports</div>
+        <p style="font-size:12px; color:#64748b; margin-top:10px;">CJO completion rates, weight discrepancies, and operational efficiency analysis.</p>
+      </div>
+    </div>
+
+    <div class="view-panel" id="assetListView">
+      <div class="content-box">
+        <div class="content-header"><div class="content-title">Asset List with Pictures</div></div>
+        <table class="data-table">
+          <thead><tr><th>Asset Photo</th><th>Asset Tag</th><th>Item Name</th><th>Category</th><th>Condition</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><div class="asset-img-placeholder"><i class="fa-solid fa-laptop"></i></div></td>
+              <td>AST-9901</td>
+              <td>Dell Latitude Servers</td>
+              <td>E-Waste</td>
+              <td>Scrap / To Shred</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="view-panel" id="collectionSummaryView">
+      <div class="content-box">
+        <div class="content-title">Collection Summary Analytics</div>
+        <p style="font-size:12px; color:#64748b; margin-top:10px;">Monthly weight metrics, customer volume distribution, and logistics totals.</p>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- INTERACTION SCRIPT -->
+  <script>
+    // Authentication Elements
+    const loginOverlay = document.getElementById('loginOverlay');
+    const loginForm = document.getElementById('loginForm');
+    const roleSelect = document.getElementById('roleSelect');
+    const passwordInput = document.getElementById('passwordInput');
+    const errorMsg = document.getElementById('errorMsg');
+    const logoutBtn = document.getElementById('logoutBtn');
+
+    // Sidebar & Navigation Elements
+    const supervisorMenu = document.getElementById('supervisorMenu');
+    const adminMenu = document.getElementById('adminMenu');
+    const userAvatar = document.getElementById('userAvatar');
+    const userName = document.getElementById('userName');
+    const userBadge = document.getElementById('userBadge');
+
+    loginForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const selectedRole = roleSelect.value;
+      const pass = passwordInput.value;
+
+      if (selectedRole === 'admin' && pass === 'admin123') {
+        loginOverlay.classList.add('hidden');
+        errorMsg.style.display = 'none';
+
+        // Set Admin UI
+        supervisorMenu.style.display = 'none';
+        adminMenu.style.display = 'flex';
+        userAvatar.textContent = 'A';
+        userName.textContent = 'System Admin';
+        userBadge.textContent = 'ADMIN';
+        userBadge.className = 'badge badge-admin';
+
+        switchView('adminDashboardView');
+      } 
+      else if (selectedRole === 'supervisor' && pass === 'super123') {
+        loginOverlay.classList.add('hidden');
+        errorMsg.style.display = 'none';
+
+        // Set Supervisor UI
+        adminMenu.style.display = 'none';
+        supervisorMenu.style.display = 'flex';
+        userAvatar.textContent = 'S';
+        userName.textContent = 'Project Supervisor';
+        userBadge.textContent = 'SUPERVISOR';
+        userBadge.className = 'badge badge-super';
+
+        switchView('dashboardView');
+      } 
+      else {
+        errorMsg.style.display = 'block';
+      }
+    });
+
+    logoutBtn.addEventListener('click', () => {
+      passwordInput.value = '';
+      loginOverlay.classList.remove('hidden');
+    });
+
+    // Accordion Toggle
+    function toggleAccordion(accId) {
+      const acc = document.getElementById(accId);
+      acc.classList.toggle('open');
+    }
+
+    // Dynamic Panel Switcher
+    function switchView(viewId) {
+      document.querySelectorAll('.view-panel').forEach(panel => panel.classList.remove('active'));
+      document.getElementById(viewId).classList.add('active');
+    }
+  </script>
+</body>
+</html>
